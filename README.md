@@ -21,7 +21,7 @@ A Lua module for openresty to send metrics to StatsD
     http {
       -- optionally set relative lua_package_path
       lua_package_path "${prefix}lua/*.lua";
-      
+
       -- make the statsd variable available in each phase
       init_by_lua 'statsd = require("statsd")';
 
@@ -31,7 +31,7 @@ A Lua module for openresty to send metrics to StatsD
           -- batch metrics into packets of at least 50
           if table.getn(statsd.buffer) > 50 then statsd.flush(ngx.socket.udp, "127.0.0.1", 8125) end
         ';
-        
+
         log_by_lua '
           -- this is the phase where metrics are registered
           statsd.incr("test.status." .. ngx.var.status)
@@ -45,7 +45,7 @@ The request-response lifecycle in nginx has [eight phases](http://wiki.nginx.org
 
 ## Changelog
 
-* 0.0.1: Works. Tested.  
+* 0.0.1: Works. Tested.
 
 ## Development
 
@@ -63,7 +63,6 @@ The request-response lifecycle in nginx has [eight phases](http://wiki.nginx.org
 3. `rake openresty:install`
 4. `rake statsd:install`
 5. `luarocks install busted [--local]`
-6. Add `lib/?.lua` to your `LUA_PATH`
 
 `guard` will run the unit tests.
 

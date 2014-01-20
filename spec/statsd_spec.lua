@@ -1,6 +1,6 @@
 require("busted")
 
-local statsd = require("statsd")
+local statsd = require("lib.statsd")
 
 describe("statsd", function()
             describe("count", function()
@@ -35,7 +35,7 @@ describe("statsd", function()
                               assert.are.equal(statsd.buffer[1], "foo:bar\n")
                               assert.are.equal(statsd.buffer[2], "zip:zap\n")
                                                                                               end)
-                        
+
                                  end)
 
             describe("flush", function()
@@ -48,6 +48,6 @@ describe("statsd", function()
                         pending("sends the buffer to statsd via UDP to specified host and port", function()
                                                                                                end)
                               end)
-            
-                   end)            
+
+                   end)
 
