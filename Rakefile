@@ -4,7 +4,7 @@ Bundler.setup(:default)
 require 'open3'
 require 'ansi/code'
 
-OPENRESTY_VERSION = "1.2.4.11"
+OPENRESTY_VERSION = "1.5.8.1"
 OPENRESTY_NAME    = "ngx_openresty-#{OPENRESTY_VERSION}"
 OPENRESTY_TARBALL = "#{OPENRESTY_NAME}.tar.gz"
 
