@@ -32,18 +32,19 @@ namespace :openresty do
     r "rm -rf #{ROOT}/tmp/ngx_*"
     r "rm -rf #{ROOT}/vendor/ngx_*"
   end
-  
+
   desc "Download ngx_openresty tarball and install it into ./vendor"
-  task :install, [:force] do |t, args|    
+  task :install, [:force] do |t, args|
     if forced = (args[:force] || "") =~ /^f/
       Rake::Task["openresty:clobber"].invoke
-    else      
+    else
       if File.exists?("#{ROOT}/vendor/#{OPENRESTY_NAME}/nginx/sbin/nginx") && r("#{ROOT}/vendor/#{OPENRESTY_NAME}/nginx/sbin/nginx -V", NONE).success?
         puts ANSI.yellow { "openresty is already installed: rake openresty:install[force] to reinstall" }
         exit
       end
     end
 
+    FileUtils.mkdir_p("tmp")
     FileUtils.cd("tmp")
     r("wget http://agentzh.org/misc/nginx/#{OPENRESTY_TARBALL}", NONE) unless File.exists?(OPENRESTY_TARBALL)
     r("tar xzvf #{OPENRESTY_TARBALL}") unless Dir.exists?(OPENRESTY_NAME)
@@ -51,7 +52,7 @@ namespace :openresty do
     FileUtils.cd(OPENRESTY_NAME)
     r "./configure --prefix=#{ROOT}/vendor/#{OPENRESTY_NAME} --with-luajit --with-http_ssl_module --with-http_gzip_static_module"
     r "make && make install"
-    
+
     puts ANSI.reverse { ANSI.green { "#{OPENRESTY_NAME} installed to ./vendor/#{OPENRESTY_NAME}. Cool beans." } }
   end
 end
@@ -63,16 +64,17 @@ namespace :statsd do
     r "rm -rf #{ROOT}/tmp/stat*"
   end
 
-  task :install, [:force] do |t, args|    
+  task :install, [:force] do |t, args|
     if forced = (args[:force] || "") =~ /^f/
       Rake::Task["statsd:clobber"].invoke
-    else      
+    else
       if File.exists?("#{ROOT}/vendor/statsd-master/bin/statsd")
         puts ANSI.yellow { "statsd is already installed: rake statsd:install[force] to reinstall" }
         exit
       end
     end
 
+    FileUtils.mkdir_p("tmp")
     FileUtils.cd("tmp")
     r("wget -O statsd.zip https://github.com/etsy/statsd/archive/master.zip", NONE) unless File.exists?("statsd.zip")
     r("unzip -d #{ROOT}/vendor statsd.zip") unless Dir.exists?("#{ROOT}/vendor/statsd-master")
