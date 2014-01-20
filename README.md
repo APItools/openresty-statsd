@@ -46,27 +46,24 @@ The request-response lifecycle in nginx has [eight phases](http://wiki.nginx.org
 ## Changelog
 
 * 0.0.1: Works. Tested.
+* 0.0.2: Uses a dictionary
 
 ## Development
 
 ### Prerequisites for dev and testing
 
-* http://openresty.org/#Installation
-* https://github.com/etsy/statsd#installation-and-configuration
-* ruby, rubygems, bundler
 * luarocks
 
 ### Build
 
 1. Clone the repo
-2. `bundle`
-3. `rake openresty:install`
-4. `rake statsd:install`
-5. `luarocks install busted [--local]`
+2. `luarocks install md5 [--local]`
+3. `luarocks install mime [--local]`
+4. `luarocks install busted [--local]`
 
-`guard` will run the unit tests.
+Then on the project folder console just run:
 
-`foreman start` will spin up nginx and statsd using dev configuration from `./config` and `./examples`.
+    busted
 
 ## Related projects
 
@@ -77,3 +74,4 @@ The request-response lifecycle in nginx has [eight phases](http://wiki.nginx.org
 ## Author
 
 [Dave Nolan](http://kapoq.com) / [lonelyplanet.com](http://www.lonelyplanet.com)
+[Enrique García](https://github.com/kikito)
