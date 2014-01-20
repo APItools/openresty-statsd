@@ -50,7 +50,7 @@ namespace :openresty do
     r("tar xzvf #{OPENRESTY_TARBALL}") unless Dir.exists?(OPENRESTY_NAME)
 
     FileUtils.cd(OPENRESTY_NAME)
-    r "./configure --prefix=#{ROOT}/vendor/#{OPENRESTY_NAME} --with-luajit --with-http_ssl_module --with-http_gzip_static_module"
+    r "./configure --prefix=#{ROOT}/vendor/#{OPENRESTY_NAME} --with-luajit --with-http_ssl_module --with-http_gzip_static_module --with-ld-opt='-L /usr/local/lib'"
     r "make && make install"
 
     puts ANSI.reverse { ANSI.green { "#{OPENRESTY_NAME} installed to ./vendor/#{OPENRESTY_NAME}. Cool beans." } }
