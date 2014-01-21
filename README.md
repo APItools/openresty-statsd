@@ -1,4 +1,6 @@
-# openresty-statsd [![travis-ci](https://secure.travis-ci.org/lonelyplanet/openresty-statsd.png)](https://secure.travis-ci.org/lonelyplanet/openresty-statsd)
+# openresty-statsd
+
+[![Build Status](https://travis-ci.org/kikito/openresty-statsd.png?branch=master)](https://travis-ci.org/kikito/openresty-statsd)
 
 A Lua module for openresty to send metrics to StatsD
 
