@@ -13,29 +13,34 @@ A Lua module for openresty to send metrics to StatsD
 ## Installation
 
 1. [Install openresty](http://openresty.org) configured `--with-luajit`
-2. Copy `lib/statsd.lua` somewhere that openresty nginx can find (you may need to adjust your LUA_PATH or use `lua_package_path` [directive](http://wiki.nginx.org/HttpLuaModule#lua_package_path)
+2. Copy `lib/statsd.lua` somewhere that openresty nginx can find (you may need to adjust your `LUA_PATH` or use `lua_package_path` [directive](http://wiki.nginx.org/HttpLuaModule#lua_package_path)
 3. Configure nginx:
 
 ```
     # an nginx conf
     http {
-      -- optionally set relative lua_package_path
+      # optionally set relative lua_package_path
       lua_package_path "${prefix}lua/*.lua";
 
-      -- make the statsd variable available in each phase
-      init_by_lua 'statsd = require("statsd")';
+      # create a shared dictionary to for statsd. The default name is STATSD
+      lua_shared_dict STATSD 20k;
 
       location /some_location {
         content_by_lua '
-          -- this is the phase where metrics are sent
-          -- batch metrics into packets of at least 50
-          if table.getn(statsd.buffer) > 50 then statsd.flush(ngx.socket.udp, "127.0.0.1", 8125) end
+          -- this is the phase where metrics are registered
+          local statsd = require 'statsd'
+          local s = statsd:new()
+          s:incr("test.status." .. ngx.var.status)
+          s:time("test.req_time", ngx.now() - ngx.req.start_time())
+
         ';
 
         log_by_lua '
-          -- this is the phase where metrics are registered
-          statsd.incr("test.status." .. ngx.var.status)
-          statsd.time("test.req_time", ngx.now() - ngx.req.start_time())
+          -- this is the phase where metrics are sent
+          -- batch metrics into packets of 50 metrics by default
+          local statsd = require 'statsd'
+          local s = statsd:new()
+          s:flush()
         ';
       }
     }
