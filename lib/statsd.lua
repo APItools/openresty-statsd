@@ -3,6 +3,14 @@ local statsd = {}
 local Methods = {}
 local mt      = {__index = Methods}
 
+local function get_dict(self)
+  local dict = ngx.shared[self.dict]
+  if not dict then
+    error('The dictionary ' .. self.dict .. ' was not found. Please create it by adding `lua_shared_dict ' .. self.dict .. ' 20k;` to the ngx config file')
+  end
+  return dict
+end
+
 function Methods:time(bucket, time)
   self:register(bucket, time, "ms")
 end
@@ -16,7 +24,7 @@ function Methods:incr(bucket, n)
 end
 
 function Methods:register(bucket, amount, suffix)
-  local dict = ngx.shared[self.dict]
+  local dict = get_dict(self)
 
   dict:add('last_id', 0)
   local last_id = assert(dict:incr('last_id', 1))
@@ -25,7 +33,7 @@ function Methods:register(bucket, amount, suffix)
 end
 
 function Methods:flush()
-  local dict = ngx.shared[self.dict]
+  local dict = get_dict(self)
 
   local last_id         = tonumber(dict:get('last_id'), 10) or 0
   local last_flushed_id = tonumber(dict:get('last_flushed_id'), 10) or 0
@@ -50,7 +58,7 @@ statsd.new = function(host, port, dict, buffer_size)
   return setmetatable({
     host        = host or '127.0.0.1',
     port        = port or 8125,
-    dict        = dict or 'STATSD',
+    dict        = dict or 'statsd',
     buffer_size = buffer_size or 50
   }, mt)
 end
