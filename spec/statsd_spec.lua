@@ -52,7 +52,7 @@ describe("statsd", function()
       s:register("foo", "bar", "baz")
       s:flush()
       assert.is_nil(dict:get('last_flushed_id'))
-      assert.are.equal(ngx.shared.STATSD:get(1), "foo:bar|baz\n")
+      assert.are.equal(ngx.shared.statsd:get(1), "foo:bar|baz\n")
     end)
 
     it("#focus sends the buffer to statsd via UDP to specified host and port", function()
@@ -68,6 +68,7 @@ describe("statsd", function()
 
       s:register("foo", "bar", "baz")
       s:register("quux", "corge", "grault")
+      s:register("garply", "waldo", "fred")
       s:flush()
 
       assert.spy(setpeername).was.called_with(mocksocket, s.host, s.port)
@@ -75,7 +76,7 @@ describe("statsd", function()
 
       assert.are.same(sent, {'foo:bar|baz\n', 'quux:corge|grault\n'})
 
-      assert.are.equal(dict:get('last_id'), 2)
+      assert.are.equal(dict:get('last_id'), 3)
       assert.are.equal(dict:get('last_flushed_id'), 2)
     end)
   end)
