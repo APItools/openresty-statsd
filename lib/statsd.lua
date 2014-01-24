@@ -36,12 +36,12 @@ function Methods:flush()
   local dict = get_dict(self)
 
   local last_id         = tonumber(dict:get('last_id'), 10) or 0
-  local last_flushed_id = tonumber(dict:get('last_flushed_id'), 10) or 1
+  local last_flushed_id = tonumber(dict:get('last_flushed_id'), 10) or 0
 
   if last_id - last_flushed_id > self.buffer_size then
-    assert(dict:set('last_flushed_id', math.max(1, last_id-1)))
+    assert(dict:set('last_flushed_id', math.max(1, last_id)))
     local buffer, len = {}, 0
-    for i=last_flushed_id, last_id-1 do
+    for i=last_flushed_id + 1, last_id do
       len = len + 1
       buffer[len] = assert(dict:get(i))
       dict:delete(i)
